@@ -219,4 +219,35 @@ public class EditorKit : ScriptableObject
        
         return r;
     }
+
+    [MenuItem("Assets/选择依赖并导出资源包")]
+    static void SelectDependInProj()
+    {
+        SelectDepends();
+    }
+
+    static void SelectDepends()
+    {
+        UnityEngine.Object[] dependObjs = EditorUtility.CollectDependencies(Selection.gameObjects);
+        List<UnityEngine.Object> selects = new List<UnityEngine.Object>();
+        List<string> paths = new List<string>();
+        foreach (var item in dependObjs)
+        {
+            string path = AssetDatabase.GetAssetPath(item);
+            if (!string.IsNullOrEmpty(path) && !path.Contains("unity default resources") && !path.Contains("unity_builtin_extra"))
+            {
+                selects.Add(item);
+                paths.Add(path);
+            }
+        }
+        if (selects.Count > 0)
+        {
+            string filePath = EditorUtility.SaveFilePanel("导出资源包", "", "", "unitypackage");
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                AssetDatabase.ExportPackage(paths.ToArray(), filePath, ExportPackageOptions.Interactive);
+                EditorUtility.DisplayDialog("导出资源包", "导出资源包成功", "确定");
+            }
+        }
+    }
 }
