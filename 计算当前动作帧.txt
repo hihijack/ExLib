@@ -1,0 +1,8 @@
+local stateInfo = self.mAnimator:GetCurrentAnimatorStateInfo(0)
+local norTime
+if math.abs(stateInfo.normalizedTime - 1) <= 0.01 then
+    norTime = 0.999
+else
+    norTime = stateInfo.normalizedTime
+end
+local curFrame = CS.UnityEngine.Mathf.RoundToInt(norTime % 1 * stateInfo.length * 30)
